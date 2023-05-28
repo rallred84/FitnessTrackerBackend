@@ -3,9 +3,9 @@
 DO NOT CHANGE THIS FILE
 
 */
-require("dotenv").config();
-const client = require("../../db/client");
-const faker = require("faker");
+require('dotenv').config();
+const client = require('../../db/client');
+const faker = require('faker');
 
 const {
   addActivityToRoutine,
@@ -14,26 +14,26 @@ const {
   getRoutineActivityById,
   getRoutineActivitiesByRoutine,
   canEditRoutineActivity,
-} = require("../../db");
+} = require('../../db');
 const {
   createFakeActivity,
   createFakePublicRoutine,
   createFakeRoutineActivity,
   createFakeUser,
-} = require("../helpers");
+} = require('../helpers');
 
-describe("DB Routine Activities", () => {
+describe('DB Routine Activities', () => {
   let fakeActivity;
   let fakeRoutine;
   let routineActivityData;
 
   beforeAll(async () => {
-    const fakeUser = await createFakeUser("Tom");
-    fakeActivity = await createFakeActivity("Hockey", "On the ice");
+    const fakeUser = await createFakeUser('Tom');
+    fakeActivity = await createFakeActivity('Hockey', 'On the ice');
     fakeRoutine = await createFakePublicRoutine(
       fakeUser.id,
-      "Every night",
-      "Until I make the team"
+      'Every night',
+      'Until I make the team'
     );
 
     routineActivityData = {
@@ -44,8 +44,8 @@ describe("DB Routine Activities", () => {
     };
   });
 
-  describe("addActivityToRoutine({ routineId, activityId, count, duration })", () => {
-    xit("creates a new routine_activity, and return it", async () => {
+  describe('addActivityToRoutine({ routineId, activityId, count, duration })', () => {
+    it('creates a new routine_activity, and return it', async () => {
       const routineActivity = await addActivityToRoutine(routineActivityData);
 
       expect(routineActivity.routineId).toBe(routineActivityData.routineId);
@@ -55,8 +55,8 @@ describe("DB Routine Activities", () => {
     });
   });
 
-  describe("getRoutineActivityById", () => {
-    xit("should return the routine activity by id", async () => {
+  describe('getRoutineActivityById', () => {
+    it('should return the routine activity by id', async () => {
       const fakeRoutineActivity = await createFakeRoutineActivity();
       const routineActivity = await getRoutineActivityById(
         fakeRoutineActivity.id
@@ -65,17 +65,17 @@ describe("DB Routine Activities", () => {
     });
   });
 
-  describe("getRoutineActivitiesByRoutine", () => {
-    xit("should return the routine activities for a routine", async () => {
-      const fakeUser = await createFakeUser("Timmy");
+  describe('getRoutineActivitiesByRoutine', () => {
+    it('should return the routine activities for a routine', async () => {
+      const fakeUser = await createFakeUser('Timmy');
       const fakeActivity = await createFakeActivity(
-        "Fortnite",
+        'Fortnite',
         "I know it's not exercise"
       );
       const fakeRoutine = await createFakePublicRoutine(
         fakeUser.id,
-        "Every waking hour",
-        "Until my mom yells at me"
+        'Every waking hour',
+        'Until my mom yells at me'
       );
       const fakeRoutineActivity = await createFakeRoutineActivity(
         fakeRoutine.id,
@@ -88,8 +88,8 @@ describe("DB Routine Activities", () => {
     });
   });
 
-  describe("updateRoutineActivity({ id, count, duration })", () => {
-    xit("Finds the routine with id equal to the passed in id. Updates the count or duration as necessary.", async () => {
+  describe('updateRoutineActivity({ id, count, duration })', () => {
+    it('Finds the routine with id equal to the passed in id. Updates the count or duration as necessary.', async () => {
       const fakeRoutineActivity = await createFakeRoutineActivity();
 
       const newRoutineActivityData = {
@@ -109,8 +109,8 @@ describe("DB Routine Activities", () => {
     });
   });
 
-  describe("destroyRoutineActivity(id)", () => {
-    xit("removes routine_activity from database, and returns it", async () => {
+  describe('destroyRoutineActivity(id)', () => {
+    it('removes routine_activity from database, and returns it', async () => {
       const fakeRoutineActivity = await createFakeRoutineActivity();
 
       const deletedRoutine = await destroyRoutineActivity(
@@ -125,13 +125,13 @@ describe("DB Routine Activities", () => {
     });
   });
 
-  describe("canEditRoutineActivity", () => {
-    xit("should return true if routine activity can be edited by user", async () => {
-      const fakeUser = await createFakeUser("Jay");
+  describe('canEditRoutineActivity', () => {
+    it('should return true if routine activity can be edited by user', async () => {
+      const fakeUser = await createFakeUser('Jay');
       const fakeRoutine = await createFakePublicRoutine(
         fakeUser.id,
-        "At 3pm",
-        "Forever"
+        'At 3pm',
+        'Forever'
       );
       const fakeRoutineActivity = await createFakeRoutineActivity(
         fakeRoutine.id
@@ -143,13 +143,13 @@ describe("DB Routine Activities", () => {
       expect(canEdit).toBeTruthy();
     });
 
-    xit("should return false if routine activity can not be edited by user", async () => {
-      const fakeUser = await createFakeUser("Kevin");
-      const anotherUser = await createFakeUser("Kyle");
+    it('should return false if routine activity can not be edited by user', async () => {
+      const fakeUser = await createFakeUser('Kevin');
+      const anotherUser = await createFakeUser('Kyle');
       const fakeRoutine = await createFakePublicRoutine(
         fakeUser.id,
-        "At 6pm",
-        "Forever"
+        'At 6pm',
+        'Forever'
       );
       const fakeRoutineActivity = await createFakeRoutineActivity(
         fakeRoutine.id
