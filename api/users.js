@@ -15,6 +15,9 @@ const {
   getUserByUsername,
   getUser,
   getUserById,
+  getAllPublicRoutines,
+  getAllRoutinesByUser,
+  getPublicRoutinesByUser,
 } = require('../db/index');
 
 // POST /api/users/register
@@ -89,7 +92,6 @@ usersRouter.post('/login', async (req, res, next) => {
 
 usersRouter.get('/me', async (req, res, next) => {
   const { id } = req.user || false;
-  console.log(id);
   try {
     if (id) {
       const user = await getUserById(id);
@@ -106,5 +108,22 @@ usersRouter.get('/me', async (req, res, next) => {
 });
 
 // GET /api/users/:username/routines
+
+usersRouter.get('/:username/routines', async (req, res, next) => {
+  const { username } = req.params;
+
+  try {
+    if (req.user) {
+      const userRoutines = await getAllRoutinesByUser({ username });
+      res.send(userRoutines);
+    } else {
+      const publicRoutines = await getPublicRoutinesByUser({ username });
+      console.log(publicRoutines);
+      res.send(publicRoutines);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = usersRouter;

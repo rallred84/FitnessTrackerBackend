@@ -19,27 +19,51 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
 async function getRoutineById(id) {}
 
 async function getRoutinesWithoutActivities() {
-  const routinesWithoutActivitiesQuery = await client.query(`
+  const { rows: routinesWithoutActivities } = await client.query(`
     SELECT * FROM routines
     WHERE id NOT IN (
       SELECT "routineId" FROM routine_activities
     );
   `);
 
-  const routinesWithoutActivities = routinesWithoutActivitiesQuery.rows;
-  if (!routinesWithoutActivities[0]) {
-    throw new Error('There was an error retriving the routines');
-  }
   return routinesWithoutActivities;
 }
 
 async function getAllRoutines() {}
 
-async function getAllPublicRoutines() {}
+async function getAllPublicRoutines() {
+  const { rows: routines } = await client.query(
+    `
+  SELECT * FROM routines
+  WHERE "isPublic" = true;
+  `
+  );
+}
 
-async function getAllRoutinesByUser({ username }) {}
+async function getAllRoutinesByUser({ username }) {
+  const { rows: routines } = await client.query(
+    `
+  SELECT * FROM routines
+  WHERE "creatorId" = (SELECT id FROM users WHERE username = $1);
+  `,
+    [username]
+  );
 
-async function getPublicRoutinesByUser({ username }) {}
+  return routines;
+}
+
+async function getPublicRoutinesByUser({ username }) {
+  const { rows: routines } = await client.query(
+    `
+  SELECT * FROM routines
+  WHERE "creatorId" = (SELECT id FROM users WHERE username = $1)
+  AND "isPublic";
+  `,
+    [username]
+  );
+  console.log(routines);
+  return routines;
+}
 
 async function getPublicRoutinesByActivity({ id }) {}
 
