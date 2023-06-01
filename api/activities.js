@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const activitiesRouter = express.Router();
 
 // GET /api/activities/:activityId/routines
 
@@ -9,4 +9,4 @@ const router = express.Router();
 
 // PATCH /api/activities/:activityId
 
-module.exports = router;
+module.exports = activitiesRouter;

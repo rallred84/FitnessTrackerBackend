@@ -3,24 +3,24 @@
 DO NOT CHANGE THIS FILE
 
 */
-require("dotenv").config();
-const request = require("supertest");
-const faker = require("faker");
-const client = require("../../db/client");
-const app = require("../../app");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+require('dotenv').config();
+const request = require('supertest');
+const faker = require('faker');
+const client = require('../../db/client');
+const app = require('../../app');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const {
   createFakeUserWithToken,
   createFakeUserWithRoutinesAndActivities,
-} = require("../helpers");
+} = require('../helpers');
 const {
   expectToBeError,
   expectNotToBeError,
   expectToHaveErrorMessage,
-} = require("../expectHelpers");
+} = require('../expectHelpers');
 
-const { JWT_SECRET = "neverTell" } = process.env;
+const { JWT_SECRET = 'neverTell' } = process.env;
 
 const { objectContaining } = expect;
 
@@ -28,16 +28,16 @@ const {
   getPublicRoutinesByUser,
   createUser,
   getAllRoutinesByUser,
-} = require("../../db");
+} = require('../../db');
 const {
   UserTakenError,
   PasswordTooShortError,
   UnauthorizedError,
-} = require("../../errors");
+} = require('../../errors');
 
-describe("/api/users", () => {
-  describe("POST /api/users/register", () => {
-    xit("Creates a new user.", async () => {
+describe('/api/users', () => {
+  describe('POST /api/users/register', () => {
+    it('Creates a new user.', async () => {
       // Create some fake user data
       const fakeUserData = {
         username: faker.internet.userName(),
@@ -45,7 +45,7 @@ describe("/api/users", () => {
       };
       // Register the user
       const response = await request(app)
-        .post("/api/users/register")
+        .post('/api/users/register')
         .send(fakeUserData);
 
       expectNotToBeError(response.body);
@@ -60,7 +60,7 @@ describe("/api/users", () => {
       });
     });
 
-    xit("EXTRA CREDIT: Hashes password before saving user to DB.", async () => {
+    it('EXTRA CREDIT: Hashes password before saving user to DB.', async () => {
       // Create some fake user data
       const fakeUserData = {
         username: faker.internet.userName(),
@@ -69,7 +69,7 @@ describe("/api/users", () => {
 
       // Create the user through the API
       const response = await request(app)
-        .post("/api/users/register")
+        .post('/api/users/register')
         .send(fakeUserData);
 
       expectNotToBeError(response.body);
@@ -97,7 +97,7 @@ describe("/api/users", () => {
       );
     });
 
-    xit("Throws errors for duplicate username", async () => {
+    it('Throws errors for duplicate username', async () => {
       // Create a fake user in the DB
       const { fakeUser: firstUser } = await createFakeUserWithToken();
       // Now try to create a user with the same username
@@ -107,7 +107,7 @@ describe("/api/users", () => {
       };
 
       const response = await request(app)
-        .post("/api/users/register")
+        .post('/api/users/register')
         .send(secondUserData);
 
       expectToBeError(response.body);
@@ -118,7 +118,7 @@ describe("/api/users", () => {
       );
     });
 
-    xit("returns error if password is less than 8 characters.", async () => {
+    it('returns error if password is less than 8 characters.', async () => {
       // Create some user data with a password with 7 characters
       const newUserShortPassword = {
         username: faker.internet.userName(),
@@ -126,15 +126,15 @@ describe("/api/users", () => {
       };
 
       const response = await request(app)
-        .post("/api/users/register")
+        .post('/api/users/register')
         .send(newUserShortPassword);
 
       expectToHaveErrorMessage(response.body, PasswordTooShortError());
     });
   });
 
-  describe("POST /api/users/login", () => {
-    xit("Logs in the user. Requires username and password, and verifies that hashed login password matches the saved hashed password.", async () => {
+  describe('POST /api/users/login', () => {
+    it('Logs in the user. Requires username and password, and verifies that hashed login password matches the saved hashed password.', async () => {
       // Create some fake user data
       const userData = {
         username: faker.internet.userName(),
@@ -144,7 +144,7 @@ describe("/api/users", () => {
       await createUser(userData);
       // Login the user
       const response = await request(app)
-        .post("/api/users/login")
+        .post('/api/users/login')
         .send(userData);
 
       expectNotToBeError(response.body);
@@ -156,7 +156,7 @@ describe("/api/users", () => {
       );
     });
 
-    xit("Logs in the user and returns the user back to us", async () => {
+    it('Logs in the user and returns the user back to us', async () => {
       // Create some fake user data
       const userData = {
         username: faker.internet.userName(),
@@ -166,7 +166,7 @@ describe("/api/users", () => {
       const user = await createUser(userData);
       // Login the user
       const response = await request(app)
-        .post("/api/users/login")
+        .post('/api/users/login')
         .send(userData);
 
       expectNotToBeError(response.body);
@@ -177,7 +177,7 @@ describe("/api/users", () => {
       });
     });
 
-    xit("Returns a JSON Web Token. Stores the id and username in the token.", async () => {
+    it('Returns a JSON Web Token. Stores the id and username in the token.', async () => {
       const userData = {
         username: faker.internet.userName(),
         password: faker.internet.password(),
@@ -186,7 +186,7 @@ describe("/api/users", () => {
       const user = await createUser(userData);
       // Login the user
       const { body } = await request(app)
-        .post("/api/users/login")
+        .post('/api/users/login')
         .send(userData);
 
       expectNotToBeError(body);
@@ -201,21 +201,21 @@ describe("/api/users", () => {
     });
   });
 
-  describe("GET /api/users/me", () => {
-    xit("sends back users data if valid token is supplied in header", async () => {
+  describe('GET /api/users/me', () => {
+    it('sends back users data if valid token is supplied in header', async () => {
       const { fakeUser, token } = await createFakeUserWithToken();
 
       const response = await request(app)
-        .get("/api/users/me")
-        .set("Authorization", `Bearer ${token}`);
+        .get('/api/users/me')
+        .set('Authorization', `Bearer ${token}`);
 
       expectNotToBeError(response.body);
 
       expect(response.body).toEqual(objectContaining(fakeUser));
     });
 
-    xit("rejects requests with no valid token", async () => {
-      const response = await request(app).get("/api/users/me");
+    it('rejects requests with no valid token', async () => {
+      const response = await request(app).get('/api/users/me');
 
       expect(response.status).toBe(401);
 
@@ -223,18 +223,18 @@ describe("/api/users", () => {
     });
   });
 
-  describe("GET /api/users/:username/routines", () => {
-    xit("Gets a list of public routines for a particular user.", async () => {
+  describe('GET /api/users/:username/routines', () => {
+    it('Gets a list of public routines for a particular user.', async () => {
       // Create a fake user with a bunch of routines associated
       const { fakeUser, token } = await createFakeUserWithRoutinesAndActivities(
-        "Greg"
+        'Greg'
       );
       // Create a second user to check against
-      const sean = await createFakeUserWithRoutinesAndActivities("Sean");
+      const sean = await createFakeUserWithRoutinesAndActivities('Sean');
 
       const response = await request(app)
         .get(`/api/users/${sean.fakeUser.username}/routines`)
-        .set("Authorization", `Bearer ${token}`);
+        .set('Authorization', `Bearer ${token}`);
 
       expectNotToBeError(response.body);
 
@@ -244,13 +244,13 @@ describe("/api/users", () => {
       expect(response.body).toEqual([...routinesFromDB]);
     });
 
-    xit("gets a list of all routines for the logged in user", async () => {
+    it('gets a list of all routines for the logged in user', async () => {
       const { fakeUser, token } = await createFakeUserWithRoutinesAndActivities(
-        "Angela"
+        'Angela'
       );
       const response = await request(app)
         .get(`/api/users/${fakeUser.username}/routines`)
-        .set("Authorization", `Bearer ${token}`);
+        .set('Authorization', `Bearer ${token}`);
 
       expectNotToBeError(response.body);
 

@@ -11,6 +11,10 @@
     "test": "jest --runInBand",
     "test:watch": "jest --runInBand --watchAll"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wallacepreston/fitnesstrackr.git"
+  },
   "keywords": [
     "node",
     "express",
@@ -18,25 +22,29 @@
     "jquery",
     "javascript"
   ],
+  "author": "Preston Wallace",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wallacepreston/fitnesstrackr/issues"
+  },
+  "homepage": "https://github.com/wallacepreston/fitnesstrackr#readme",
   "devDependencies": {
-    "eslint": "^8.41.0",
-    "eslint-plugin-jest": "^27.2.1",
-    "faker": "^5.5.3",
-    "Faker": "^0.7.2",
-    "nodemon": "^2.0.22",
-    "supertest": "^6.3.3"
+    "eslint": "^8.2.0",
+    "eslint-plugin-jest": "^25.2.4",
+    "nodemon": "^2.0.4",
+    "supertest": "^6.1.6"
   },
   "dependencies": {
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
-    "chalk": "^4.1.2",
+    "chalk": "^4.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "jest": "^29.5.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "faker": "^4.1.0",
+    "jest": "^26.0.1",
     "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
-    "pg": "^8.11.0"
+    "pg": "^8.2.1"
   }
 }
