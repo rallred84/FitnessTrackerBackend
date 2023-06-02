@@ -1,9 +1,13 @@
 const client = require('./client');
+const chalk = require('chalk');
+const util = require('util');
 
 // database functions
 async function createActivity({ name, description }) {
   // return the new activity
-  const newActivityQuery = await client.query(
+  const {
+    rows: [newActivity],
+  } = await client.query(
     `
     INSERT INTO activities (name, description)
     VALUES ($1, $2)
@@ -11,39 +15,79 @@ async function createActivity({ name, description }) {
     `,
     [name, description]
   );
-  const newActivity = newActivityQuery.rows[0];
 
-  if (!newActivity) {
-    throw new Error('No new activity was created.');
-  }
-
-  return {
-    success: true,
-    activity: newActivity,
-  };
+  return newActivity;
 }
 
 async function getAllActivities() {
   // select and return an array of all activities
-  const allActivitiesQuery = await client.query(`
+  const { rows: allActivities } = await client.query(`
   SELECT * FROM activities;
   `);
-  const allActivities = allActivitiesQuery.rows;
 
-  if (!allActivities[0]) {
-    throw new Error('There was an error retriving the activities');
-  }
   return allActivities;
 }
 
-async function getActivityById(id) {}
+async function getActivityById(id) {
+  const {
+    rows: [activity],
+  } = await client.query(
+    `
+    SELECT * FROM activities
+    WHERE id = $1
+  `,
+    [id]
+  );
 
-async function getActivityByName(name) {}
+  return activity;
+}
+
+async function getActivityByName(name) {
+  const {
+    rows: [activity],
+  } = await client.query(
+    `
+  SELECT * FROM activities
+  WHERE name = $1
+  `,
+    [name]
+  );
+
+  return activity;
+}
 
 // used as a helper inside db/routines.js
 async function attachActivitiesToRoutines(routines) {}
 
 async function updateActivity({ id, ...fields }) {
+  const updateKeys = [];
+  const updateValues = [];
+
+  if (fields.name) {
+    updateKeys.push('name');
+    updateValues.push(fields.name);
+  }
+  if (fields.description) {
+    updateKeys.push('description');
+    updateValues.push(fields.description);
+  }
+
+  const setString = updateKeys
+    .map((key, idx) => `${key} = '${updateValues[idx]}'`)
+    .join(', ');
+
+  const {
+    rows: [activity],
+  } = await client.query(
+    `
+  UPDATE activities
+  SET ${setString}
+  WHERE id = ${id}
+  RETURNING *;
+  `
+  );
+
+  return activity;
   // don't try to update the id
   // do update the name and description
   // return the updated activity
