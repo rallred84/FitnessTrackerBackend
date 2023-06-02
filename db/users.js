@@ -1,7 +1,7 @@
 const client = require('./client');
 const bcrypt = require('bcrypt');
-const chalk = require('chalk');
-const util = require('util');
+// const chalk = require('chalk');
+// const util = require('util');
 
 // database functions
 

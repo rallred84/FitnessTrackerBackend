@@ -1,4 +1,5 @@
 const client = require('./client');
+const { attachActivitiesToRoutines } = require('./activities');
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   const newRoutineQuery = await client.query(
@@ -29,40 +30,62 @@ async function getRoutinesWithoutActivities() {
   return routinesWithoutActivities;
 }
 
-async function getAllRoutines() {}
+async function getAllRoutines() {
+  const { rows: routines } = await client.query(
+    `
+    SELECT r.id, r."creatorId", u.username "creatorName", r."isPublic", r.name, r.goal
+    FROM routines r
+    JOIN users u ON r."creatorId" = u.id;
+    `
+  );
+  const updatedRoutines = await attachActivitiesToRoutines(routines);
+  return updatedRoutines;
+}
 
 async function getAllPublicRoutines() {
   const { rows: routines } = await client.query(
     `
-  SELECT * FROM routines
+  SELECT r.* , u.username "creatorName"
+  FROM routines r
+  JOIN users u ON r."creatorId" = u.id
   WHERE "isPublic" = true;
+
   `
   );
+  const updatedRoutines = await attachActivitiesToRoutines(routines);
+
+  return updatedRoutines;
 }
 
 async function getAllRoutinesByUser({ username }) {
   const { rows: routines } = await client.query(
     `
-  SELECT * FROM routines
+  SELECT r.* , u.username "creatorName"
+  FROM routines r
+  JOIN users u ON r."creatorId" = u.id
   WHERE "creatorId" = (SELECT id FROM users WHERE username = $1);
   `,
     [username]
   );
+  const updatedRoutines = await attachActivitiesToRoutines(routines);
 
-  return routines;
+  return updatedRoutines;
 }
 
 async function getPublicRoutinesByUser({ username }) {
   const { rows: routines } = await client.query(
     `
-  SELECT * FROM routines
+  SELECT r.* , u.username "creatorName"
+  FROM routines r
+  JOIN users u ON r."creatorId" = u.id
   WHERE "creatorId" = (SELECT id FROM users WHERE username = $1)
   AND "isPublic";
   `,
     [username]
   );
-  console.log(routines);
-  return routines;
+  const updatedRoutines = await attachActivitiesToRoutines(routines);
+
+  return updatedRoutines;
 }
 
 async function getPublicRoutinesByActivity({ id }) {}
