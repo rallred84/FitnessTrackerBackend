@@ -19,7 +19,19 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
   return newRoutine;
 }
 
-async function getRoutineById(id) {}
+async function getRoutineById(id) {
+  const {
+    rows: [routine],
+  } = await client.query(
+    `
+  SELECT * FROM routines
+  WHERE id = $1
+  `,
+    [id]
+  );
+
+  return routine;
+}
 
 async function getRoutinesWithoutActivities() {
   const { rows: routinesWithoutActivities } = await client.query(`
