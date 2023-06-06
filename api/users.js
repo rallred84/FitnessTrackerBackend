@@ -113,12 +113,11 @@ usersRouter.get('/:username/routines', async (req, res, next) => {
   const { username } = req.params;
 
   try {
-    if (req.user) {
+    if (req.user.username === username) {
       const userRoutines = await getAllRoutinesByUser({ username });
       res.send(userRoutines);
     } else {
       const publicRoutines = await getPublicRoutinesByUser({ username });
-      console.log(publicRoutines);
       res.send(publicRoutines);
     }
   } catch (error) {
