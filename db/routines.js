@@ -7,7 +7,7 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
     INSERT INTO routines ("creatorId", "isPublic", name, goal)
     VALUES ($1, $2, $3, $4)
     ON CONFLICT (name) DO NOTHING
-    RETURNING *
+    RETURNING *;
     `,
     [creatorId, isPublic, name, goal]
   );
@@ -24,7 +24,7 @@ async function getRoutineById(id) {
   } = await client.query(
     `
   SELECT * FROM routines
-  WHERE id = $1
+  WHERE id = $1;
   `,
     [id]
   );
