@@ -2,8 +2,6 @@
 const express = require('express');
 const usersRouter = express.Router();
 const jwt = require('jsonwebtoken');
-const chalk = require('chalk');
-const util = require('util');
 
 usersRouter.use((req, res, next) => {
   console.log('A request is being made to /users');
@@ -15,10 +13,9 @@ const {
   getUserByUsername,
   getUser,
   getUserById,
-  getAllPublicRoutines,
   getAllRoutinesByUser,
   getPublicRoutinesByUser,
-} = require('../db/index');
+} = require('../db');
 
 // POST /api/users/register
 
@@ -91,10 +88,9 @@ usersRouter.post('/login', async (req, res, next) => {
 // GET /api/users/me
 
 usersRouter.get('/me', async (req, res, next) => {
-  const { id } = req.user || false;
   try {
-    if (id) {
-      const user = await getUserById(id);
+    if (req.user) {
+      const user = await getUserById(req.user.id);
       res.send(user);
     } else {
       next({

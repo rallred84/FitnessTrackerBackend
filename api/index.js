@@ -3,10 +3,13 @@ const apiRouter = express.Router();
 const { getUserById } = require('../db');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
-const chalk = require('chalk');
 
 // GET /api/health
-apiRouter.get('/health', async (req, res, next) => {});
+apiRouter.get('/health', async (req, res) => {
+  res.status(200).send({
+    message: 'Router is healthy',
+  });
+});
 
 //AUTHENTICATE
 
@@ -51,6 +54,12 @@ apiRouter.use('/routines', routinesRouter);
 // ROUTER: /api/routine_activities
 const routineActivitiesRouter = require('./routineActivities');
 apiRouter.use('/routine_activities', routineActivitiesRouter);
+
+apiRouter.use('/', (req, res) => {
+  res.status(404).send({
+    message: 'This route is unknown',
+  });
+});
 
 apiRouter.use((error, req, res, next) => {
   res.status(401).send({

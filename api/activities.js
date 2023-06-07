@@ -7,7 +7,7 @@ const {
   createActivity,
   getActivityById,
   updateActivity,
-} = require('../db/index');
+} = require('../db');
 
 activitiesRouter.use((req, res, next) => {
   console.log('A request is being made to /activities');

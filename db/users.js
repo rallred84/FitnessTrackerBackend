@@ -1,7 +1,5 @@
 const client = require('./client');
 const bcrypt = require('bcrypt');
-// const chalk = require('chalk');
-// const util = require('util');
 
 // database functions
 
@@ -21,13 +19,16 @@ async function createUser({ username, password }) {
     `
       INSERT INTO users (username, password)
       VALUES ($1, $2)
+      ON CONFLICT (username) DO NOTHING
       RETURNING *;
       `,
     [username, hashedPassword]
   );
 
-  delete newUser.password;
-  return newUser;
+  if (newUser) {
+    delete newUser.password;
+    return newUser;
+  }
 }
 
 async function getUser({ username, password }) {
@@ -36,7 +37,7 @@ async function getUser({ username, password }) {
   } = await client.query(
     `
   SELECT * FROM users
-  WHERE username = $1
+  WHERE username = $1;
   `,
     [username]
   );
@@ -55,7 +56,7 @@ async function getUserById(userId) {
   } = await client.query(
     `
   SELECT * FROM users
-  WHERE id = $1
+  WHERE id = $1;
   `,
     [userId]
   );
@@ -74,8 +75,9 @@ async function getUserByUsername(userName) {
   `,
     [userName]
   );
-
-  return user;
+  if (user) {
+    return user;
+  }
 }
 
 module.exports = {

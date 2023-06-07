@@ -1,6 +1,4 @@
 const client = require('./client');
-const chalk = require('chalk');
-const util = require('util');
 
 // database functions
 async function createActivity({ name, description }) {
@@ -11,6 +9,7 @@ async function createActivity({ name, description }) {
     `
     INSERT INTO activities (name, description)
     VALUES ($1, $2)
+    ON CONFLICT (name) DO NOTHING
     RETURNING *;
     `,
     [name, description]
@@ -34,7 +33,7 @@ async function getActivityById(id) {
   } = await client.query(
     `
     SELECT * FROM activities
-    WHERE id = $1
+    WHERE id = $1;
   `,
     [id]
   );
@@ -48,7 +47,7 @@ async function getActivityByName(name) {
   } = await client.query(
     `
   SELECT * FROM activities
-  WHERE name = $1
+  WHERE name = $1;
   `,
     [name]
   );

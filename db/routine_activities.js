@@ -12,8 +12,8 @@ async function addActivityToRoutine({
     `
     INSERT INTO "routine_activities" ("routineId", "activityId", count, duration)
     VALUES ($1, $2, $3, $4)
-    RETURNING *
-  `,
+    RETURNING *;
+    `,
     [routineId, activityId, count, duration]
   );
 

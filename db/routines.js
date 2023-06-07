@@ -1,13 +1,12 @@
 const client = require('./client');
 const { attachActivitiesToRoutines } = require('./activities');
-const chalk = require('chalk');
-const util = require('util');
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   const newRoutineQuery = await client.query(
     `
     INSERT INTO routines ("creatorId", "isPublic", name, goal)
     VALUES ($1, $2, $3, $4)
+    ON CONFLICT (name) DO NOTHING
     RETURNING *
     `,
     [creatorId, isPublic, name, goal]
@@ -83,7 +82,9 @@ async function getAllRoutinesByUser({ username }) {
   );
   const updatedRoutines = await attachActivitiesToRoutines(routines);
 
-  return updatedRoutines;
+  if (updatedRoutines) {
+    return updatedRoutines;
+  }
 }
 
 async function getPublicRoutinesByUser({ username }) {
@@ -99,7 +100,9 @@ async function getPublicRoutinesByUser({ username }) {
   );
   const updatedRoutines = await attachActivitiesToRoutines(routines);
 
-  return updatedRoutines;
+  if (updatedRoutines) {
+    return updatedRoutines;
+  }
 }
 
 async function getPublicRoutinesByActivity({ id }) {
